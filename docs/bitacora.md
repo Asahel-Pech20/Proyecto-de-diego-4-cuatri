@@ -1,0 +1,45 @@
+# Bitácora del equipo
+
+> Acuerdos y tareas por semana. ✏️ Completar con fechas y acuerdos reales de cada reunión:
+> el docente revisa avances semanales y la participación de cada integrante.
+
+Formato:
+
+```
+## AAAA-MM-DD · Semana N
+Asistentes: ...
+Acuerdos:
+- ...
+Tareas (responsable → entrega):
+- Nombre → tarea (Issue #)
+Avance mostrado al docente: ...
+```
+
+---
+
+## 2026-11-22 · Versión 1.0.0
+
+Avance: API REST (auth, CRUD, sincronización, fotos), app Android con modo sin conexión y versión web.
+Commit `9fad657`.
+
+✏️ Asistentes / acuerdos / quién hizo qué.
+
+## 2026-11-23 · Versión 1.1.0
+
+Avance: widget de pantalla de inicio, recordatorios confiables (guía de batería, reprogramación al
+reiniciar), ajustes y borrado de cuenta. Commit `f0ba7c3`.
+
+✏️ Asistentes / acuerdos / quién hizo qué.
+
+## 2026-11-23 · Versión 1.2.0 (entrega)
+
+Avance:
+- Ícono propio de la app y APK de distribución firmado con clave del proyecto (fuera del repo).
+- Pruebas de validación de formularios (datos inválidos) y corrección de desbordes en login/registro.
+- Lockfile de la web sincronizado (`npm ci` fallaba).
+- Documentación de entrega: propuesta, análisis y diseño, web vs. móvil, datos y seguridad, pruebas, APK y presentación.
+
+Pendiente del equipo:
+- ✏️ Probar el APK en un teléfono real y guardar capturas en `docs/evidencias/`.
+- ✏️ Correr `npm test` del backend con Docker y anotar el resultado en `docs/pruebas.md`.
+- ✏️ Cada integrante sube su parte con su cuenta (ver Issues).
