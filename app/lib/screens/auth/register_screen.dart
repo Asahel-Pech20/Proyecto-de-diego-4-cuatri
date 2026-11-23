@@ -217,9 +217,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Volver al login
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  // Volver al login. Wrap (no Row) para que no se desborde en
+                  // pantallas angostas o con el texto del sistema agrandado.
+                  Wrap(
+                    alignment: WrapAlignment.center,
                     children: [
                       const Text(
                         '¿Ya tienes una cuenta? ',
