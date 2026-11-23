@@ -1,0 +1,19 @@
+node_modules/
+.env
+backend/uploads/*
+!backend/uploads/.gitkeep
+# Flutter
+app/build/
+app/.dart_tool/
+app/.flutter-plugins*
+# Web
+web/dist/
+
+# Firmas y archivos locales de Android
+*.jks
+*.keystore
+key.properties
+local.properties
+# APK generados
+*.apk
+*.aab
