@@ -34,7 +34,7 @@ void main() {
     );
   });
 
-  group('Revisión Claude - 3 Pruebas Requeridas', () {
+  group('Manejo de Errores de Red y Sincronización Offline', () {
     // (a) Una petición que lanza SocketException se convierte en ApiException con statusCode 0
     test('(a) una petición que lanza SocketException se convierte en ApiException con statusCode 0', () async {
       final mockClient = MockSocketExceptionClient();

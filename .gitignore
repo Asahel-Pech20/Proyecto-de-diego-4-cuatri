@@ -17,3 +17,10 @@ local.properties
 # APK generados
 *.apk
 *.aab
+
+# Notas internas para los asistentes de IA (se quedan solo en local)
+CLAUDE.md
+GEMINI.md
+
+# Caché de compilación de Kotlin
+.kotlin/

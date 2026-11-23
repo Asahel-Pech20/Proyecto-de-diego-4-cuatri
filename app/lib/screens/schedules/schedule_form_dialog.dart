@@ -30,6 +30,7 @@ class _ScheduleFormDialogState extends State<ScheduleFormDialog> {
   late TimeOfDay _startTime;
   late TimeOfDay _endTime;
   late TextEditingController _roomController;
+  final Set<int> _repeatDays = {};
   bool _isSaving = false;
 
   bool get isEditing => widget.schedule != null;
@@ -72,6 +73,7 @@ class _ScheduleFormDialogState extends State<ScheduleFormDialog> {
     final picked = await showTimePicker(
       context: context,
       initialTime: _startTime,
+      initialEntryMode: TimePickerEntryMode.dial,
     );
     if (picked != null) {
       setState(() {
@@ -88,6 +90,7 @@ class _ScheduleFormDialogState extends State<ScheduleFormDialog> {
     final picked = await showTimePicker(
       context: context,
       initialTime: _endTime,
+      initialEntryMode: TimePickerEntryMode.dial,
     );
     if (picked != null) {
       setState(() => _endTime = picked);
@@ -113,6 +116,7 @@ class _ScheduleFormDialogState extends State<ScheduleFormDialog> {
     final provider = context.read<ScheduleProvider>();
     final startStr = _formatTime(_startTime);
     final endStr = _formatTime(_endTime);
+    final room = _roomController.text.trim().isEmpty ? null : _roomController.text.trim();
 
     bool ok;
     if (isEditing) {
@@ -122,7 +126,7 @@ class _ScheduleFormDialogState extends State<ScheduleFormDialog> {
         dayOfWeek: _selectedDay,
         startTime: startStr,
         endTime: endStr,
-        room: _roomController.text.trim().isEmpty ? null : _roomController.text.trim(),
+        room: room,
       );
     } else {
       ok = await provider.createSchedule(
@@ -130,8 +134,23 @@ class _ScheduleFormDialogState extends State<ScheduleFormDialog> {
         dayOfWeek: _selectedDay,
         startTime: startStr,
         endTime: endStr,
-        room: _roomController.text.trim().isEmpty ? null : _roomController.text.trim(),
+        room: room,
       );
+
+      // Replicar en otros días seleccionados
+      if (ok) {
+        for (final extraDay in _repeatDays) {
+          if (extraDay != _selectedDay) {
+            await provider.createSchedule(
+              subjectId: _selectedSubjectId!,
+              dayOfWeek: extraDay,
+              startTime: startStr,
+              endTime: endStr,
+              room: room,
+            );
+          }
+        }
+      }
     }
 
     if (!mounted) return;
@@ -139,9 +158,12 @@ class _ScheduleFormDialogState extends State<ScheduleFormDialog> {
 
     if (ok) {
       Navigator.of(context).pop();
+      final msg = isEditing
+          ? 'Clase actualizada'
+          : (_repeatDays.isNotEmpty ? 'Clases agregadas al horario' : 'Clase agregada al horario');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(isEditing ? 'Clase actualizada' : 'Clase agregada al horario'),
+          content: Text(msg),
           backgroundColor: Colors.green[700],
           behavior: SnackBarBehavior.floating,
         ),
@@ -221,13 +243,66 @@ class _ScheduleFormDialogState extends State<ScheduleFormDialog> {
                   );
                 }).toList(),
                 onChanged: (val) {
-                  if (val != null) setState(() => _selectedDay = val);
+                  if (val != null) {
+                    setState(() {
+                      _selectedDay = val;
+                      _repeatDays.remove(val);
+                    });
+                  }
                 },
                 decoration: InputDecoration(
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 ),
               ),
+              if (!isEditing) ...[
+                const SizedBox(height: 14),
+                const Text(
+                  'Repetir en otros días',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 4,
+                  runSpacing: 2,
+                  children: [
+                    for (final d in const [
+                      {'val': 1, 'label': 'L', 'name': 'Lun'},
+                      {'val': 2, 'label': 'M', 'name': 'Mar'},
+                      {'val': 3, 'label': 'M', 'name': 'Mié'},
+                      {'val': 4, 'label': 'J', 'name': 'Jue'},
+                      {'val': 5, 'label': 'V', 'name': 'Vie'},
+                      {'val': 6, 'label': 'S', 'name': 'Sáb'},
+                    ])
+                      if (d['val'] != _selectedDay)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Checkbox(
+                              value: _repeatDays.contains(d['val'] as int),
+                              onChanged: (checked) {
+                                setState(() {
+                                  if (checked == true) {
+                                    _repeatDays.add(d['val'] as int);
+                                  } else {
+                                    _repeatDays.remove(d['val'] as int);
+                                  }
+                                });
+                              },
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              visualDensity: VisualDensity.compact,
+                              activeColor: AppConstants.primaryColor,
+                            ),
+                            Text(
+                              '${d['label']} (${d['name']})',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            const SizedBox(width: 6),
+                          ],
+                        ),
+                  ],
+                ),
+              ],
               const SizedBox(height: 16),
 
               // Horario (Inicio y Fin)

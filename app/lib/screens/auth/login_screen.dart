@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../config/constants.dart';
 import '../../providers/auth_provider.dart';
+import '../../services/notification_service.dart';
 import '../../widgets/custom_text_field.dart';
 import '../settings/api_settings_dialog.dart';
 import '../main_shell.dart';
@@ -39,6 +40,8 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
 
     if (success) {
+      await NotificationService.instance.checkAndRequestExactAlarmPermission();
+      if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const MainShell()),
       );

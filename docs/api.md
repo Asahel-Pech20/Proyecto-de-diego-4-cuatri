@@ -1,6 +1,6 @@
 # API de MiSemestre UTM — contrato
 
-> Lo mantiene Claude. El frontend (Gemini) **solo lo lee**. Si falta algo, pídelo en `docs/pendientes-frontend.md`.
+> Lo mantiene el backend. La app y la web **solo lo leen**. Si falta algo, pídelo en `docs/pendientes-frontend.md`.
 
 - **URL base:** `http://localhost:3000` (web) · `http://10.0.2.2:3000` (emulador Android) · `http://<IP-de-la-PC>:3000` (teléfono físico en la misma Wi-Fi).
 - **Formato:** JSON en camelCase. Fechas-hora en ISO 8601 con zona (`2026-11-20T14:00:00.000Z`). Fechas solas `YYYY-MM-DD`. Horas `HH:MM`.
@@ -17,6 +17,7 @@ Siempre `{ "error": "mensaje" }` con el código HTTP:
 | 401 | Sin token, token inválido, o login incorrecto. |
 | 404 | No existe o no es del usuario. |
 | 409 | Correo ya registrado, o `id` repetido. |
+| 429 | Demasiados intentos: 10 logins fallidos en 15 min, o 30 registros en 1 h, desde la misma IP. Mostrar el `error` tal cual y no reintentar en automático. |
 | 500 | Error del servidor. |
 
 ---
@@ -185,3 +186,4 @@ Flujo recomendado en la app:
 ## Cambios
 - 2026-11-19 — Versión inicial.
 - 2026-11-19 — Fotos: aclarado que la parte `photo` debe enviarse con Content-Type de imagen.
+- 2026-11-23 — Auth: límite de intentos (`429`) en `/api/auth/login` y `/api/auth/register`.

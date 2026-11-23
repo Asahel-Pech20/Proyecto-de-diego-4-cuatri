@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../config/constants.dart';
+import '../services/notification_service.dart';
+import '../services/storage_service.dart';
 import 'home/home_screen.dart';
 import 'schedules/schedule_screen.dart';
+import 'settings/battery_guide_dialog.dart';
 import 'tasks/tasks_screen.dart';
 import 'subjects/subjects_screen.dart';
 
@@ -21,6 +24,17 @@ class _MainShellState extends State<MainShell> {
   void initState() {
     super.initState();
     _currentIndex = widget.initialTab;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await NotificationService.instance.checkAndRequestExactAlarmPermission();
+      NotificationService.processPendingNotificationTap();
+
+      final hasSeen = await StorageService.instance.hasSeenBatteryGuide();
+      if (!hasSeen && mounted) {
+        await BatteryGuideDialog.show(context);
+        await StorageService.instance.setSeenBatteryGuide(true);
+      }
+    });
   }
 
   void _onTabTapped(int index) {

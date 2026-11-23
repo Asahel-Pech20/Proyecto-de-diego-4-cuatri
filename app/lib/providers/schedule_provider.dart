@@ -3,6 +3,7 @@ import 'package:uuid/uuid.dart';
 import '../models/schedule.dart';
 import '../services/api_service.dart';
 import '../services/database_service.dart';
+import '../services/home_widget_service.dart';
 
 class CurrentAndNextClass {
   final Schedule? current;
@@ -93,6 +94,7 @@ class ScheduleProvider extends ChangeNotifier {
     await DatabaseService.instance.insertSchedule(schedule);
     _schedules = await DatabaseService.instance.getSchedules();
     notifyListeners();
+    await HomeWidgetService.updateWidget();
 
     // 2. Intentar subir al servidor
     try {
@@ -146,6 +148,7 @@ class ScheduleProvider extends ChangeNotifier {
     await DatabaseService.instance.updateSchedule(updated);
     _schedules = await DatabaseService.instance.getSchedules();
     notifyListeners();
+    await HomeWidgetService.updateWidget();
 
     // 2. Subir al servidor
     try {
@@ -174,6 +177,7 @@ class ScheduleProvider extends ChangeNotifier {
     await DatabaseService.instance.markScheduleDeleted(id);
     _schedules = await DatabaseService.instance.getSchedules();
     notifyListeners();
+    await HomeWidgetService.updateWidget();
 
     try {
       await ApiService.instance.deleteSchedule(id);

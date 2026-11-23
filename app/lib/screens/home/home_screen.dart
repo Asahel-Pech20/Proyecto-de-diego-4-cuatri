@@ -10,7 +10,7 @@ import '../../providers/schedule_provider.dart';
 import '../../providers/subject_provider.dart';
 import '../../providers/task_provider.dart';
 import '../../services/sync_service.dart';
-import '../settings/api_settings_dialog.dart';
+import '../settings/settings_screen.dart';
 import '../tasks/task_form_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -95,9 +95,11 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 1,
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings_ethernet),
-            tooltip: 'Configurar servidor',
-            onPressed: () => ApiSettingsDialog.show(context),
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Ajustes',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            ),
           ),
           IconButton(
             icon: const Icon(Icons.sync_rounded),

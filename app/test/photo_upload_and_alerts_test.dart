@@ -128,7 +128,7 @@ void main() {
     );
   });
 
-  group('Revisión Claude - Fotos, Sincronización y Alertas de Faltas', () {
+  group('Subida de Fotos, Sincronización y Alertas de Faltas', () {
     // (a) uploadPhoto manda Content-Type image/jpeg para un .jpg e image/png para un .png
     test('(a) uploadPhoto manda Content-Type image/jpeg para un .jpg e image/png para un .png', () async {
       final tempDir = Directory.systemTemp.createTempSync('photos_test_');

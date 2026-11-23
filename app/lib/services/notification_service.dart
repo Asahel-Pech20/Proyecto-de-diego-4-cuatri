@@ -1,22 +1,52 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import '../models/task_item.dart';
+import '../screens/tasks/task_form_dialog.dart';
+import 'database_service.dart';
 
 class NotificationService {
   static NotificationService? _instance;
   final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
   bool _initialized = false;
 
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static String? _pendingTaskIdToOpen;
+
   NotificationService._();
 
   static NotificationService get instance {
     _instance ??= NotificationService._();
     return _instance!;
+  }
+
+  static void handleNotificationTap(String taskId) {
+    _pendingTaskIdToOpen = taskId;
+    processPendingNotificationTap();
+  }
+
+  static Future<void> processPendingNotificationTap() async {
+    final taskId = _pendingTaskIdToOpen;
+    if (taskId == null) return;
+
+    final ctx = navigatorKey.currentContext;
+    if (ctx == null) return;
+
+    _pendingTaskIdToOpen = null;
+
+    try {
+      final task = await DatabaseService.instance.getTaskById(taskId);
+      if (task != null && ctx.mounted) {
+        TaskFormDialog.show(ctx, task: task);
+      }
+    } catch (e) {
+      debugPrint('Error abriendo tarea desde notificación: $e');
+    }
   }
 
   Future<void> init() async {
@@ -33,15 +63,50 @@ class NotificationService {
     const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
     const initSettings = InitializationSettings(android: androidSettings);
 
-    await _notificationsPlugin.initialize(settings: initSettings);
+    await _notificationsPlugin.initialize(
+      settings: initSettings,
+      onDidReceiveNotificationResponse: (response) {
+        final payload = response.payload;
+        if (payload != null && payload.isNotEmpty) {
+          handleNotificationTap(payload);
+        }
+      },
+    );
 
     if (Platform.isAndroid) {
       final androidImplementation = _notificationsPlugin
           .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
       await androidImplementation?.requestNotificationsPermission();
+
+      try {
+        final launchDetails = await _notificationsPlugin.getNotificationAppLaunchDetails();
+        if (launchDetails != null &&
+            launchDetails.didNotificationLaunchApp &&
+            launchDetails.notificationResponse?.payload != null) {
+          _pendingTaskIdToOpen = launchDetails.notificationResponse!.payload;
+        }
+      } catch (e) {
+        debugPrint('Error verificando notification launch details: $e');
+      }
     }
 
     _initialized = true;
+  }
+
+  Future<void> checkAndRequestExactAlarmPermission() async {
+    if (kIsWeb || !Platform.isAndroid) return;
+    try {
+      final androidImplementation = _notificationsPlugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      if (androidImplementation != null) {
+        final canSchedule = await androidImplementation.canScheduleExactNotifications();
+        if (canSchedule == false) {
+          await androidImplementation.requestExactAlarmsPermission();
+        }
+      }
+    } catch (e) {
+      debugPrint('Error verificando permiso de alarmas exactas: $e');
+    }
   }
 
   /// Calcula el ID entero estable para la notificación de una tarea y su índice de recordatorio
@@ -124,9 +189,23 @@ class NotificationService {
             androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
             title: title,
             body: body,
+            payload: task.id,
           );
         } catch (e) {
-          debugPrint('Error programando notificación $notifId: $e');
+          debugPrint('Error programando con exactAllowWhileIdle: $e. Reintentando con inexactAllowWhileIdle');
+          try {
+            await _notificationsPlugin.zonedSchedule(
+              id: notifId,
+              scheduledDate: tz.TZDateTime.from(reminderTime, tz.local),
+              notificationDetails: details,
+              androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+              title: title,
+              body: body,
+              payload: task.id,
+            );
+          } catch (e2) {
+            debugPrint('Error programando notificación $notifId con inexactAllowWhileIdle: $e2');
+          }
         }
       }
     }

@@ -160,7 +160,7 @@ export function Home() {
                 </div>
                 <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
                   {currentClass.startTime} - {currentClass.endTime}
-                  {(currentClass.room || currentClass.classroom) && ` • Salón: ${currentClass.room || currentClass.classroom}`}
+                  {currentClass.room && ` • Salón: ${currentClass.room}`}
                 </div>
               </div>
             ) : (
@@ -187,7 +187,7 @@ export function Home() {
                 </div>
                 <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
                   {getDayName(nextClass.dayOfWeek)} • {nextClass.startTime} - {nextClass.endTime}
-                  {(nextClass.room || nextClass.classroom) && ` • Salón: ${nextClass.room || nextClass.classroom}`}
+                  {nextClass.room && ` • Salón: ${nextClass.room}`}
                 </div>
               </div>
             ) : (
@@ -237,8 +237,8 @@ export function Home() {
                       </div>
                     </div>
                   </div>
-                  <span className={t.kind === 'exam' || t.isExam ? 'badge badge-exam' : 'badge badge-task'}>
-                    {t.kind === 'exam' || t.isExam ? 'Examen' : 'Tarea'}
+                  <span className={t.kind === 'exam' ? 'badge badge-exam' : 'badge badge-task'}>
+                    {t.kind === 'exam' ? 'Examen' : 'Tarea'}
                   </span>
                 </div>
               );
@@ -310,8 +310,8 @@ export function Home() {
                         </div>
                       </div>
                     </div>
-                    <span className={t.kind === 'exam' || t.isExam ? 'badge badge-exam' : 'badge badge-task'}>
-                      {t.kind === 'exam' || t.isExam ? 'Examen' : 'Tarea'}
+                    <span className={t.kind === 'exam' ? 'badge badge-exam' : 'badge badge-task'}>
+                      {t.kind === 'exam' ? 'Examen' : 'Tarea'}
                     </span>
                   </div>
                 );
@@ -381,8 +381,8 @@ export function Home() {
                         </div>
                       </div>
                     </div>
-                    <span className={t.kind === 'exam' || t.isExam ? 'badge badge-exam' : 'badge badge-task'}>
-                      {t.kind === 'exam' || t.isExam ? 'Examen' : 'Tarea'}
+                    <span className={t.kind === 'exam' ? 'badge badge-exam' : 'badge badge-task'}>
+                      {t.kind === 'exam' ? 'Examen' : 'Tarea'}
                     </span>
                   </div>
                 );

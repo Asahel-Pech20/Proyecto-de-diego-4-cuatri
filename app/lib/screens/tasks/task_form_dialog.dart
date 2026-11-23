@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../config/constants.dart';
+import '../../models/schedule.dart';
 import '../../models/task_item.dart';
 import '../../models/subject.dart';
 import '../../providers/schedule_provider.dart';
@@ -20,6 +21,47 @@ class TaskFormDialog extends StatefulWidget {
       context: context,
       builder: (ctx) => TaskFormDialog(task: task),
     );
+  }
+
+  /// Encuentra la fecha y hora de la próxima clase de una materia específica
+  static DateTime? findNextClassStartTime(
+    List<Schedule> allSchedules,
+    String subjectId, {
+    DateTime? from,
+  }) {
+    final now = from ?? DateTime.now();
+    final subjectSchedules = allSchedules
+        .where((s) => s.subjectId == subjectId && s.deletedAt == null)
+        .toList();
+
+    if (subjectSchedules.isEmpty) return null;
+
+    DateTime? earliest;
+
+    for (int dayOffset = 0; dayOffset <= 14; dayOffset++) {
+      final date = now.add(Duration(days: dayOffset));
+      final dayOfWeek = date.weekday; // 1 = Lunes ... 7 = Domingo
+
+      final dayClasses = subjectSchedules.where((s) => s.dayOfWeek == dayOfWeek);
+      for (final cls in dayClasses) {
+        final parts = cls.startTime.split(':');
+        final hour = int.tryParse(parts[0]) ?? 8;
+        final minute = int.tryParse(parts[1]) ?? 0;
+        final classDateTime = DateTime(date.year, date.month, date.day, hour, minute);
+
+        if (classDateTime.isAfter(now)) {
+          if (earliest == null || classDateTime.isBefore(earliest)) {
+            earliest = classDateTime;
+          }
+        }
+      }
+
+      if (earliest != null && dayOffset > 0) {
+        break;
+      }
+    }
+
+    return earliest;
   }
 
   @override
@@ -71,20 +113,29 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
       _descriptionController = TextEditingController();
 
       // Detección automática para captura rápida (máximo 3 toques):
-      // 1. Materia por defecto: la clase en curso en este momento (si hay una)
+      // Si hay una clase en curso o la siguiente clase de hoy, preselecciona esa materia por defecto,
+      // y pon como fecha/hora de entrega por defecto el inicio de la siguiente clase de esa materia.
       final scheduleProvider = context.read<ScheduleProvider>();
       final currentAndNext = scheduleProvider.getCurrentAndNextClass();
 
-      final currentClass = currentAndNext.current;
+      final relevantClass = currentAndNext.current ?? currentAndNext.next;
       final tomorrow = DateTime.now().add(const Duration(days: 1));
 
-      if (currentClass != null) {
-        _selectedSubjectId = currentClass.subjectId;
-        // Fecha por defecto: mañana a la hora de esa clase
-        final parts = currentClass.startTime.split(':');
-        final hour = int.tryParse(parts[0]) ?? 8;
-        final minute = int.tryParse(parts[1]) ?? 0;
-        _dueAt = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, hour, minute);
+      if (relevantClass != null) {
+        _selectedSubjectId = relevantClass.subjectId;
+        final nextClassTime = TaskFormDialog.findNextClassStartTime(
+          scheduleProvider.schedules,
+          relevantClass.subjectId,
+        );
+
+        if (nextClassTime != null) {
+          _dueAt = nextClassTime;
+        } else {
+          final parts = relevantClass.startTime.split(':');
+          final hour = int.tryParse(parts[0]) ?? 8;
+          final minute = int.tryParse(parts[1]) ?? 0;
+          _dueAt = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, hour, minute);
+        }
       } else {
         // Mañana a las 23:59 por defecto
         _dueAt = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 23, 59);
@@ -111,6 +162,7 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
     final pickedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: _dueAt.hour, minute: _dueAt.minute),
+      initialEntryMode: TimePickerEntryMode.dial,
     );
     if (pickedTime == null || !mounted) return;
 

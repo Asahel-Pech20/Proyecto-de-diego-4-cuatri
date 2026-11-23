@@ -116,7 +116,7 @@ export function Tasks() {
       subjectId: task.subjectId,
       title: task.title,
       description: task.description || '',
-      kind: task.kind || (task.isExam ? 'exam' : 'task'),
+      kind: task.kind || 'task',
       dueAt: isoToDatetimeLocal(task.dueAt),
       photoUrl: task.photoUrl || null,
       reminders: Array.isArray(task.reminders) ? [...task.reminders] : [],
@@ -217,7 +217,7 @@ export function Tasks() {
 
   // Filtrado de la lista
   const nowTime = new Date().getTime();
-  const isTaskExam = (t) => t.kind === 'exam' || t.isExam;
+  const isTaskExam = (t) => t.kind === 'exam';
   const filteredTasks = tasks.filter((t) => {
     if (filterType === 'tasks' && isTaskExam(t)) return false;
     if (filterType === 'exams' && !isTaskExam(t)) return false;
@@ -377,8 +377,8 @@ export function Tasks() {
                       >
                         {t.title}
                       </span>
-                      <span className={t.kind === 'exam' || t.isExam ? 'badge badge-exam' : 'badge badge-task'}>
-                        {t.kind === 'exam' || t.isExam ? 'Examen' : 'Tarea'}
+                      <span className={t.kind === 'exam' ? 'badge badge-exam' : 'badge badge-task'}>
+                        {t.kind === 'exam' ? 'Examen' : 'Tarea'}
                       </span>
                       {isOverdue && (
                         <span className="badge" style={{ backgroundColor: '#fee2e2', color: '#991b1b' }}>

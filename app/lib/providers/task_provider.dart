@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../models/task_item.dart';
 import '../services/api_service.dart';
 import '../services/database_service.dart';
+import '../services/home_widget_service.dart';
 import '../services/notification_service.dart';
 
 class GroupedTasks {
@@ -153,6 +154,9 @@ class TaskProvider extends ChangeNotifier {
     // 2. Programar notificaciones locales
     await NotificationService.instance.scheduleTaskReminders(task, subjectName);
 
+    // Actualizar widget de pantalla de inicio
+    await HomeWidgetService.updateWidget();
+
     // 3. Subir foto y enviar al backend en segundo plano
     _syncTaskInBackground(task, photoFile);
 
@@ -241,6 +245,9 @@ class TaskProvider extends ChangeNotifier {
       await NotificationService.instance.scheduleTaskReminders(updated, subjectName);
     }
 
+    // Actualizar widget de pantalla de inicio
+    await HomeWidgetService.updateWidget();
+
     // 3. Subir al backend en segundo plano
     _syncUpdatedTaskInBackground(updated, localPhotoPath != null ? File(localPhotoPath) : null);
 
@@ -301,6 +308,9 @@ class TaskProvider extends ChangeNotifier {
       await NotificationService.instance.scheduleTaskReminders(updated, subjectName);
     }
 
+    // Actualizar widget de pantalla de inicio
+    await HomeWidgetService.updateWidget();
+
     // 3. Servidor
     try {
       await ApiService.instance.updateTask(task.id, {'done': newDone});
@@ -320,6 +330,7 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
 
     await NotificationService.instance.cancelTaskReminders(id);
+    await HomeWidgetService.updateWidget();
 
     try {
       await ApiService.instance.deleteTask(id);

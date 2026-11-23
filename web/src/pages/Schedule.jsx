@@ -84,7 +84,7 @@ export function Schedule() {
       dayOfWeek: schedule.dayOfWeek,
       startTime: schedule.startTime,
       endTime: schedule.endTime,
-      room: schedule.room || schedule.classroom || '',
+      room: schedule.room || '',
     });
     setFormError('');
     setModalOpen(true);
@@ -291,9 +291,9 @@ export function Schedule() {
                               <div style={{ fontSize: '11px', opacity: 0.95, marginTop: '2px' }}>
                                 🕒 {s.startTime} - {s.endTime}
                               </div>
-                              {(s.room || s.classroom) && (
+                              {s.room && (
                                 <div style={{ fontSize: '11px', opacity: 0.9, marginTop: '2px' }}>
-                                  📍 {s.room || s.classroom}
+                                  📍 {s.room}
                                 </div>
                               )}
                             </div>

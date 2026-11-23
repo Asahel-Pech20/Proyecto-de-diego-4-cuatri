@@ -286,7 +286,7 @@ export function simulateProjectedGrade(grades, simulatedPendingScore) {
  * @returns {Object} Payload listo para la API
  */
 export function buildTaskPayload(formData) {
-  const kind = formData.kind === 'exam' || formData.isExam === true ? 'exam' : 'task';
+  const kind = formData.kind === 'exam' ? 'exam' : 'task';
   const isoDueAt = formData.dueAt ? datetimeLocalToIso(formData.dueAt) : null;
   return {
     subjectId: formData.subjectId,
@@ -306,7 +306,7 @@ export function buildTaskPayload(formData) {
  * @returns {Object} Payload listo para la API
  */
 export function buildSchedulePayload(formData) {
-  const roomVal = (formData.room || formData.classroom)?.trim() || null;
+  const roomVal = formData.room?.trim() || null;
   return {
     subjectId: formData.subjectId,
     dayOfWeek: Number(formData.dayOfWeek),

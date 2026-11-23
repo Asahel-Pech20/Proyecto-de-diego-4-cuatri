@@ -62,11 +62,23 @@ class StorageService {
     return prefs.getString(AppConstants.keyLastSyncTime);
   }
 
+  // Guía de batería vista
+  Future<bool> hasSeenBatteryGuide() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('has_seen_battery_guide') ?? false;
+  }
+
+  Future<void> setSeenBatteryGuide(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('has_seen_battery_guide', value);
+  }
+
   // Limpiar todo (Logout)
   Future<void> clearAll() async {
     await deleteToken();
     await deleteUser();
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(AppConstants.keyLastSyncTime);
+    await prefs.remove('has_seen_battery_guide');
   }
 }

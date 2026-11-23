@@ -61,9 +61,40 @@ const form = new FormData();
 form.append('photo', new Blob([Buffer.from('89504e470d0a1a0a', 'hex')], { type: 'image/png' }), 'p.png');
 r = await call('POST', '/api/uploads', undefined, { raw: form });
 assert.equal(r.status, 201, JSON.stringify(r.data));
-r = await call('GET', r.data.url);
+const photoUrl = r.data.url;
+r = await call('GET', photoUrl);
 assert.equal(r.status, 200);
 step('subir y leer foto');
+
+// --- Aislamiento: otro usuario no puede ver ni tocar nada de esta cuenta (con datos VIVOS) ---
+{
+  const ownerToken = token;
+  r = await call('POST', '/api/auth/register', { name: 'Intruso', email: `intruso-${Date.now()}@utm.test`, password: 'secreto123' });
+  assert.equal(r.status, 201);
+  token = r.data.token;
+
+  assert.equal((await call('GET', `/api/tasks/${clientId}`)).status, 404, 'leer tarea ajena');
+  assert.equal((await call('PATCH', `/api/tasks/${clientId}`, { title: 'hackeado' })).status, 404, 'editar tarea ajena');
+  assert.equal((await call('DELETE', `/api/tasks/${clientId}`)).status, 404, 'borrar tarea ajena');
+  assert.equal((await call('PATCH', `/api/subjects/${subject.id}`, { name: 'hackeada' })).status, 404, 'editar materia ajena');
+  assert.equal((await call('DELETE', `/api/subjects/${subject.id}`)).status, 404, 'borrar materia ajena');
+  assert.equal((await call('GET', `/api/subjects/${subject.id}/summary`)).status, 404, 'resumen de materia ajena');
+  assert.equal((await call('POST', '/api/schedules', { subjectId: subject.id, dayOfWeek: 2, startTime: '07:00', endTime: '08:00' })).status, 404, 'crear clase en materia ajena');
+  assert.equal((await call('POST', '/api/tasks', { subjectId: subject.id, title: 'x', dueAt: new Date().toISOString() })).status, 404, 'crear tarea en materia ajena');
+  assert.equal((await call('GET', photoUrl)).status, 404, 'foto ajena');
+  r = await call('GET', '/api/tasks');
+  assert.equal(r.data.length, 0, 'la lista no incluye tareas ajenas');
+  r = await call('GET', '/api/sync');
+  assert.equal(r.data.subjects.length + r.data.tasks.length + r.data.schedules.length, 0, 'sync sin datos ajenos');
+  assert.equal((await call('DELETE', '/api/me')).status, 204);
+
+  token = ownerToken;
+  r = await call('GET', `/api/tasks/${clientId}`);
+  assert.equal(r.data.title, 'Práctica 1', 'la tarea sigue intacta');
+  r = await call('GET', `/api/subjects/${subject.id}`);
+  assert.equal(r.data.name, 'Programación móvil', 'la materia sigue intacta');
+  step('aislamiento: otro usuario no puede leer, editar, borrar ni ver fotos ajenas');
+}
 
 for (const date of ['2026-09-01', '2026-09-03', '2026-09-08', '2026-09-10']) {
   await call('POST', '/api/absences', { subjectId: subject.id, date });

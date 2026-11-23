@@ -7,6 +7,7 @@ import '../../providers/subject_provider.dart';
 import '../../services/database_service.dart';
 import '../auth/login_screen.dart';
 import '../settings/api_settings_dialog.dart';
+import '../settings/settings_screen.dart';
 import 'subject_detail_screen.dart';
 import 'subject_form_screen.dart';
 
@@ -172,13 +173,28 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert_rounded),
             onSelected: (value) {
-              if (value == 'server') {
+              if (value == 'settings') {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                );
+              } else if (value == 'server') {
                 ApiSettingsDialog.show(context);
               } else if (value == 'logout') {
                 _logout();
               }
             },
             itemBuilder: (ctx) => [
+              const PopupMenuItem(
+                value: 'settings',
+                child: Row(
+                  children: [
+                    Icon(Icons.settings_outlined, size: 20, color: AppConstants.primaryColor),
+                    SizedBox(width: 10),
+                    Text('Ajustes'),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
               const PopupMenuItem(
                 value: 'server',
                 child: Row(
@@ -189,7 +205,6 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                   ],
                 ),
               ),
-              const PopupMenuDivider(),
               const PopupMenuItem(
                 value: 'logout',
                 child: Row(

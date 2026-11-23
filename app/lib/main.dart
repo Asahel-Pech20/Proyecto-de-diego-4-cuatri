@@ -13,6 +13,7 @@ import 'providers/grade_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/main_shell.dart';
 import 'services/database_service.dart';
+import 'services/home_widget_service.dart';
 import 'services/notification_service.dart';
 import 'services/sync_service.dart';
 
@@ -32,15 +33,16 @@ void main() async {
     debugPrint('Error inicializando NotificationService: $e');
   }
 
-  // Hook para reprogramar recordatorios tras cada sincronización exitosa
+  // Hook para reprogramar recordatorios y actualizar widget tras cada sincronización exitosa
   SyncService.instance.onSyncCompleted = () async {
     try {
       final tasks = await DatabaseService.instance.getTasks();
       final subjects = await DatabaseService.instance.getSubjects();
       final subjectNames = {for (var s in subjects) s.id: s.name};
       await NotificationService.instance.rescheduleAllReminders(tasks, subjectNames);
+      await HomeWidgetService.updateWidget();
     } catch (e) {
-      debugPrint('Error reprogramando recordatorios tras sync: $e');
+      debugPrint('Error tras sync (recordatorios/widget): $e');
     }
   };
 
@@ -62,6 +64,7 @@ class MiSemestreApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => GradeProvider()),
       ],
       child: MaterialApp(
+        navigatorKey: NotificationService.navigatorKey,
         title: AppConstants.appName,
         debugShowCheckedModeBanner: false,
         locale: const Locale('es', 'MX'),

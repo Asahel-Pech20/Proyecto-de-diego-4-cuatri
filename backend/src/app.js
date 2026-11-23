@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { ZodError } from 'zod';
 import multer from 'multer';
+import { rateLimit } from 'express-rate-limit';
 import { requireAuth } from './auth.js';
 import { HttpError } from './util.js';
 import authRoutes from './routes/auth.js';
@@ -13,14 +14,48 @@ import uploadRoutes from './routes/uploads.js';
 import { resourceRouter } from './routes/resource.js';
 import { scheduleSchema, taskSchema, absenceSchema, gradeSchema } from './schemas.js';
 
-export function createApp() {
+/**
+ * Límites de intentos en /api/auth (por IP):
+ * - login: 10 intentos FALLIDOS cada 15 min (los correctos no cuentan).
+ * - registro: 30 cuentas por hora.
+ * Configurables con AUTH_LOGIN_MAX / AUTH_REGISTER_MAX o con `opts` (pruebas).
+ */
+function authLimiters(opts) {
+  const loginMax = opts.loginMax ?? Number(process.env.AUTH_LOGIN_MAX ?? 10);
+  const registerMax = opts.registerMax ?? Number(process.env.AUTH_REGISTER_MAX ?? 30);
+  const common = { standardHeaders: 'draft-8', legacyHeaders: false };
+  return {
+    login: rateLimit({
+      ...common,
+      windowMs: 15 * 60 * 1000,
+      limit: loginMax,
+      skipSuccessfulRequests: true,
+      handler: (_req, res) => res.status(429).json({
+        error: 'Demasiados intentos fallidos. Espera 15 minutos e inténtalo de nuevo.',
+      }),
+    }),
+    register: rateLimit({
+      ...common,
+      windowMs: 60 * 60 * 1000,
+      limit: registerMax,
+      handler: (_req, res) => res.status(429).json({
+        error: 'Demasiados registros desde esta red. Inténtalo más tarde.',
+      }),
+    }),
+  };
+}
+
+export function createApp(opts = {}) {
   const app = express();
+  const limiters = authLimiters(opts);
   app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
   const origins = process.env.CORS_ORIGIN?.split(',').map((s) => s.trim()).filter(Boolean);
   app.use(cors(origins?.length ? { origin: origins } : undefined));
   app.use(express.json({ limit: '1mb' }));
 
   app.get('/api/health', (_req, res) => res.json({ ok: true }));
+  app.use('/api/auth/login', limiters.login);
+  app.use('/api/auth/register', limiters.register);
   app.use('/api/auth', authRoutes);
 
   app.use('/api', requireAuth);
