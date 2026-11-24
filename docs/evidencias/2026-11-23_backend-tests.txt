@@ -1,0 +1,18 @@
+# npm test del backend con PostgreSQL 16 en Docker (docker compose) — 2026-11-23 18:53
+npm notice run misemestre-backend@0.1.0 test
+npm notice run node --env-file-if-exists=.env test/smoke.js && node --env-file-if-exists=.env test/rate-limit.js
+✓ registro
+✓ login
+✓ materia creada
+✓ horario
+✓ tarea con id del cliente + marcar hecha
+✓ subir y leer foto
+✓ aislamiento: otro usuario no puede leer, editar, borrar ni ver fotos ajenas
+✓ faltas y simulador (necesita 8.75 en el final)
+✓ validación
+✓ borrado en cascada + sync
+✓ aislamiento entre usuarios
+✓ borrar cuenta
+
+Todo bien.
+✓ login bloqueado (429) después de 3 intentos fallidos

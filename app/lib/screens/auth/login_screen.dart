@@ -200,9 +200,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Registro
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  // Registro. Wrap (no Row) para pantallas angostas o texto agrandado.
+                  Wrap(
+                    alignment: WrapAlignment.center,
                     children: [
                       const Text(
                         '¿No tienes cuenta? ',

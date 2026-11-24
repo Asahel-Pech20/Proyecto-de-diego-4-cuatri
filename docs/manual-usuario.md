@@ -7,7 +7,7 @@ recordatorios que llegan aunque no tengas internet.
 
 ## 1. Instalar la app
 
-1. Descarga `MiSemestre-UTM-v1.0.0.apk` de la sección *Releases* del repositorio.
+1. Descarga `MiSemestre-UTM-v1.2.0.apk` de la sección *Releases* del repositorio.
 2. Ábrelo en tu teléfono Android. Si lo pide, permite **instalar apps de origen desconocido**.
 3. Al abrir la app por primera vez, acepta el permiso de **notificaciones**: sin él no llegan los recordatorios.
 

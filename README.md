@@ -20,6 +20,21 @@ Proyecto final de Desarrollo de Aplicaciones Móviles.
 | `docs/api.md` | Contrato de la API entre el backend y los frontends |
 | `docs/manual-usuario.md` | Manual de usuario de la app |
 | `docs/cuentas-prueba.md` | Cuentas de prueba y cuenta de demo |
+| `presentacion/` | Presentación de venta del proyecto (pitch para inversionistas) |
+
+## Entregables del proyecto final
+
+| # | Entregable | Dónde |
+|---|---|---|
+| 1 | Propuesta | [docs/propuesta.md](docs/propuesta.md) |
+| 2 | Análisis y diseño (historias, mapa de navegación, bocetos, guía visual) | [docs/analisis-diseno.md](docs/analisis-diseno.md) |
+| 3 | Código fuente | `app/`, `web/`, `backend/` |
+| 4 | Repositorio y colaboración | [CONTRIBUTING.md](CONTRIBUTING.md) · [docs/bitacora.md](docs/bitacora.md) · [docs/participacion.md](docs/participacion.md) |
+| 5 | Datos y seguridad | [docs/datos-seguridad.md](docs/datos-seguridad.md) |
+| 6 | Pruebas e incidencias | [docs/pruebas.md](docs/pruebas.md) |
+| 7 | APK firmado | *Releases* · cómo generarlo: [docs/apk-firma.md](docs/apk-firma.md) |
+| 8 | Demostración | Flujo en [docs/analisis-diseno.md#7-flujo-que-se-demostrará](docs/analisis-diseno.md) · [presentacion/](presentacion/) |
+| 9 | Complemento web | [docs/web-vs-movil.md](docs/web-vs-movil.md) |
 
 ## Descargar la app
 
@@ -47,3 +62,17 @@ npm install
 npm run dev
 ```
 Abre http://localhost:5173. Pruebas: `npm test`.
+
+## App (Flutter)
+Requisitos: Flutter 3.47+ (Dart 3.13) y Android SDK.
+```powershell
+cd app
+flutter pub get
+flutter analyze
+flutter test
+flutter run            # en un teléfono o emulador conectado
+```
+En el teléfono, toca **Configurar servidor** en el inicio de sesión y escribe `http://<IP-de-la-PC>:3000`
+(misma red Wi-Fi). En el emulador la dirección por defecto `http://10.0.2.2:3000` ya funciona.
+
+APK de distribución firmado: ver [docs/apk-firma.md](docs/apk-firma.md).
