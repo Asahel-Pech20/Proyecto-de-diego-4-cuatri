@@ -46,7 +46,7 @@
   - Santiago Asahel Pech Ake → `NotificationService` con alarmas exactas, receptor de arranque para reprogramar recordatorios y corrección de **I-5**.
   - Nataly Marisol Santos Miam → Pantalla de guía de batería, pantalla de Ajustes, selector de servidor y diálogo de confirmación para borrar cuenta (`BORRAR`).
   - Oscar Michel Matos May → Endpoint `DELETE /api/me` con borrado en cascada y eliminación de fotos del usuario, además del script de datos realistas `npm run seed:demo`.
-  - Genaro Aurelio Antonio Pacheco → Proveedor nativo del widget en Kotlin (`MiSemestreWidgetProvider.kt`), servicio `HomeWidgetService` y pruebas de widgets/ajustes.
+  - Genaro Aurelio Antonio Pacheco → Proveedor nativo del widget en Kotlin (`HomeScreenWidgetProvider.kt`), servicio `HomeWidgetService` y pruebas de widgets/ajustes.
 
 ---
 
