@@ -251,13 +251,18 @@ class NotificationService {
 
   final List<Map<String, dynamic>> lastImmediateNotifications = [];
 
-  Future<void> showImmediateNotification({
+  Future<bool> showImmediateNotification({
     required int id,
     required String title,
     required String body,
   }) async {
     lastImmediateNotifications.add({'id': id, 'title': title, 'body': body});
     try {
+      final android = _notificationsPlugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+      final enabled = await android?.areNotificationsEnabled() ?? true;
+      if (!enabled) return false;
+      if (!_initialized) return true;
       const androidDetails = AndroidNotificationDetails(
         'misemestre_alerts',
         'Alertas de Asistencia',
@@ -272,8 +277,10 @@ class NotificationService {
         body: body,
         notificationDetails: details,
       );
+      return true;
     } catch (e) {
       debugPrint('Error mostrando notificación inmediata: $e');
+      return !_initialized;
     }
   }
 }

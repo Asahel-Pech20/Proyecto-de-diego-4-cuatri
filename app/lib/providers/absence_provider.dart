@@ -108,12 +108,12 @@ class AbsenceProvider extends ChangeNotifier {
     if (summary.exceeded) {
       final alreadySentExceeded = prefs.getBool(exceededKey) ?? false;
       if (!alreadySentExceeded) {
-        await NotificationService.instance.showImmediateNotification(
+        final shown = await NotificationService.instance.showImmediateNotification(
           id: (sub.id.hashCode & 0x7FFFFFFF) + 1,
           title: '¡Límite de faltas superado!',
           body: 'Has excedido el límite de ${sub.maxAbsences} faltas en ${sub.name}.',
         );
-        await prefs.setBool(exceededKey, true);
+        if (shown) await prefs.setBool(exceededKey, true);
       }
     }
 
@@ -121,12 +121,12 @@ class AbsenceProvider extends ChangeNotifier {
     if (summary.atRisk && !summary.exceeded) {
       final alreadySentWarning = prefs.getBool(warningKey) ?? false;
       if (!alreadySentWarning) {
-        await NotificationService.instance.showImmediateNotification(
+        final shown = await NotificationService.instance.showImmediateNotification(
           id: sub.id.hashCode & 0x7FFFFFFF,
           title: '¡Atención en ${sub.name}!',
           body: 'Te quedan ${summary.remaining} falta(s) en ${sub.name}.',
         );
-        await prefs.setBool(warningKey, true);
+        if (shown) await prefs.setBool(warningKey, true);
       }
     }
   }
