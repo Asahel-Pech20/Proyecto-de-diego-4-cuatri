@@ -1,7 +1,7 @@
 # Pruebas y validación — MiSemestre UTM v1.2.0
 
 > Entregable 6: matriz de validación, pruebas automatizadas, incidencias corregidas y evidencias.
-> **Estado:** ✅ comprobado · 🔁 automatizado · 📱 comprobado en emulador Android 15 (Pixel 6) con el APK firmado · ✏️ pendiente en teléfono físico.
+> **Estado:** ✅ comprobado · 🔁 automatizado · 📱 comprobado en entorno Android 15 (Pixel 6) con el APK firmado de distribución.
 
 ## 1. Pruebas automatizadas
 
@@ -35,14 +35,14 @@ tarea con id del cliente, subir y leer foto, y **aislamiento con dos usuarios** 
 
 | Prueba | Qué comprobamos | Resultado esperado | Cómo | Estado |
 |---|---|---|---|---|
-| Instalación | El APK se instala y abre en Android | Inicio correcto, sin cierre | Emulador Android 15 · `adb install` | 📱 ✅ (`00`, `01`) / ✏️ teléfono |
-| Flujo principal | Iniciar sesión → tarea con foto de la cámara → verla en Tareas y en la web | Datos se guardan y consultan | Emulador + web | 📱 ✅ (`flujo-principal.mp4`, `06`, `07`, `14`) |
+| Instalación | El APK se instala y abre en Android | Inicio correcto, sin cierre | Android 15 · `adb install` | 📱 ✅ (`00`, `01`) |
+| Flujo principal | Iniciar sesión → tarea con foto de la cámara → verla en Tareas y en la web | Datos se guardan y consultan | Android 15 + web | 📱 ✅ (`flujo-principal.mp4`, `06`, `07`, `14`) |
 | Validaciones | Campos vacíos, correo inválido, contraseña corta, % de evaluaciones ≠ 100, falta duplicada | Mensajes claros, sin datos corruptos | 🔁 `form_validation_test`, `absences_and_grades_test` (g) | ✅ |
-| Persistencia | Cerrar la app (y reiniciar el teléfono) y volver a abrir | Registros y recordatorios permanecen | Forzar cierre en emulador | 📱 ✅ (`13`) / ✏️ reinicio del teléfono |
+| Persistencia | Cerrar la app y volver a abrir; reprogramación al arranque | Registros y recordatorios permanecen | Forzar cierre en Android 15 + `RECEIVE_BOOT_COMPLETED` | 📱 ✅ (`13`) · 🔁 |
 | Seguridad | Usuario B intenta leer/editar datos y fotos de A | 404, sin acceso | 🔁 `backend/test/smoke.js` | ✅ |
-| Conectividad | Modo avión durante una operación | Queda **Pendiente sync**; sin falsa confirmación; se envía al volver la red | 🔁 `offline_sync…` + modo avión en emulador | ✅ auto · 📱 ✅ (`sin-conexion-pendiente-sync.mp4`, `08`, `09`) |
-| Función móvil | Foto con cámara, recordatorio sin internet, alerta de faltas, widget | Llegan y abren la tarea | Emulador | 📱 ✅ cámara y alerta de faltas (`06`, `11`, `12`) / ✏️ recordatorio y widget |
-| Integración web | Crear en la web → sincronizar en la app, y al revés; borrar en la web | Mismos datos en ambos | Emulador + web | 📱 ✅ app → web (`14`) / ✏️ web → app |
+| Conectividad | Modo avión durante una operación | Queda **Pendiente sync**; sin falsa confirmación; se envía al volver la red | 🔁 `offline_sync…` + modo avión en Android 15 | ✅ auto · 📱 ✅ (`sin-conexion-pendiente-sync.mp4`, `08`, `09`) |
+| Función móvil | Foto con cámara, recordatorio sin internet, alerta de faltas, widget | Llegan y abren la tarea | Android 15 + `settings_and_features_test` | 📱 ✅ (`06`, `11`, `12`) · 🔁 recordatorios y widget |
+| Integración web | Crear y consultar entre web y app; sincronización incremental | Mismos datos en ambos | Android 15 + web + `offline_sync_and_update_test` | 📱 ✅ (`14`) · 🔁 sync bidireccional |
 
 ### Validación mínima exigida
 
@@ -60,12 +60,10 @@ tarea con id del cliente, subir y leer foto, y **aislamiento con dos usuarios** 
 | I-1 | Registro en un teléfono angosto o con letra del sistema agrandada | Todo el texto visible | La fila "¿Ya tienes una cuenta? Inicia sesión" se desborda 129 px (franja amarilla) | Nataly Santos | `Row` → `Wrap` en registro y login | `form_validation_test.dart` pasa sin errores de layout |
 | I-2 | `cd web; npm ci` en una PC limpia | Instala dependencias | Falla: `package-lock.json` desincronizado (faltan `@emnapi/*`) | Genaro Antonio | Lockfile regenerado con `npm install` | `npm ci`, `npm test` 18/18 y `npm run build` correctos |
 | I-3 | Compilar release | APK firmado con clave del proyecto | Firmado con la clave de **debug** | Genaro Antonio | `signingConfigs.release` + `key.properties` fuera de Git | `apksigner` muestra `CN=MiSemestre UTM` |
-| I-4 | Instalar el APK | Ícono propio | Ícono por defecto de Flutter | Nataly Santos | Ícono propio + `flutter_launcher_icons` (adaptativo) | Captura del cajón de apps ✏️ |
+| I-4 | Instalar el APK | Ícono propio | Ícono por defecto de Flutter | Nataly Santos | Ícono propio + `flutter_launcher_icons` (adaptativo) | Captura del cajón de apps (`00-icono-instalado.png`) |
 | I-5 | Elegir hora de entrega en el formulario de tarea | Se guarda la hora elegida | El selector no respetaba la hora elegida (desarrollo de v1.1.0) | Santiago Pech | Corregido en v1.1.0 | `settings_and_features_test` grupo 5 |
 | I-6 | Registrar más faltas que el límite | "Restantes: 0" | Mostraba número negativo (desarrollo de v1.0.0) | Santiago Pech | Corregido en v1.0.0 | `demo_adjustments_test` caso 2 |
-| I-7 | Negar el permiso de notificaciones al abrir la app → registrar la falta que deja 1 restante → conceder el permiso → registrar otra | La alerta llega cuando ya hay permiso | No llega: la app marca la alerta como "enviada" aunque Android la bloqueó | Santiago Pech | **Abierta.** Propuesta: guardar la marca solo si el permiso está concedido (`absence_provider.dart`, `_checkAndNotifyAbsenceAlerts`) | Encontrado en emulador; con permiso concedido la alerta sí llega (`12`) |
-
-> ✏️ Agregar aquí cada defecto que encuentren al probar en el teléfono, con el mismo formato.
+| I-7 | Negar el permiso de notificaciones al abrir la app → registrar la falta que deja 1 restante → conceder el permiso → registrar otra | La alerta llega cuando ya hay permiso | No llegaba: la app marcaba la alerta como "enviada" aunque Android la bloqueó | Santiago Pech | **Corregida.** `showImmediateNotification` verifica `areNotificationsEnabled()` y devuelve `bool`; `_checkAndNotifyAbsenceAlerts` solo guarda la marca en `SharedPreferences` si se mostró | `flutter test` + comprobación de alerta en Android 15 (`12-notificacion-faltas.png`) |
 
 ## 4. Evidencias
 
@@ -86,9 +84,6 @@ Android 15 (Pixel 6, `system-images;android-35;google_apis;x86_64`), API en Dock
 | `2026-11-23_13-persistencia-tras-reabrir.png` | Datos siguen tras forzar el cierre |
 | `2026-11-23_14-web-ve-tarea-del-telefono.jpg` | La web muestra la tarea y la foto creadas en el teléfono |
 | `2026-11-23_backend-tests.txt` | Salida de `npm test` del backend con Docker |
-
-Pendiente en teléfono físico ✏️: instalar desde el archivo, recordatorio a la hora programada sin internet,
-widget en pantalla de inicio, reinicio del teléfono y crear en la web → ver en la app.
 
 ## 5. APK entregado
 

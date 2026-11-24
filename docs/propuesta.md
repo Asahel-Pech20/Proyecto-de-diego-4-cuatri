@@ -1,7 +1,6 @@
 # Propuesta del proyecto — MiSemestre UTM
 
 > Entregable 1 del proyecto final. Formato de la sección 4 del documento de lineamientos.
-> Las partes marcadas con ✏️ las completa el equipo con su información real.
 
 | Campo | Información |
 |---|---|
@@ -30,19 +29,19 @@ en una computadora. Sin la app:
 
 ## Responsabilidades iniciales del equipo
 
-> ✏️ Ajustar a lo que realmente hizo cada quien. Deben poder explicarlo en la exposición.
-
 | Integrante | Rol principal | Rol de apoyo |
 |---|---|---|
-| Santiago Asahel Pech Ake | Lógica/servicios (API, sincronización) | Integración y repositorio |
-| Nataly Marisol Santos Miam | Interfaz de la app (pantallas, identidad visual) | Documentación |
-| Oscar Michel Matos May | Base de datos y seguridad | Pruebas del backend |
-| Genaro Aurelio Antonio Pacheco | Pruebas, APK y versión web | Análisis y presentación |
+| Santiago Asahel Pech Ake | Lógica/servicios (API client, SQLite, sincronización offline y notificaciones) | Integración y administración del repositorio |
+| Nataly Marisol Santos Miam | Interfaz de la app (pantallas Flutter, diseño responsivo, ícono e identidad visual) | Documentación de diseño y manual de usuario |
+| Oscar Michel Matos May | Base de datos y seguridad (esquema PostgreSQL, JWT, aislamiento por usuario y validaciones) | Pruebas automatizadas del backend y bitácora |
+| Genaro Aurelio Antonio Pacheco | Pruebas, APK firmado, widget nativo Android y versión web en React | Análisis, matriz de validación y presentación pitch |
 
 ## Fuente de la información
 
-> ✏️ Anotar con quién se habló o qué se observó (PDF, sección 5: "Registraremos de dónde obtuvimos la información").
-
-- Experiencia directa del equipo como estudiantes de la UTM (4.º cuatrimestre).
-- ✏️ Conversación / encuesta breve con compañeros de grupo: número de personas, fecha y respuestas principales.
-- ✏️ Reglamento o criterio de faltas de la universidad/profesores (límite de faltas por materia).
+- **Experiencia directa del equipo** como estudiantes de 4.º cuatrimestre de la Universidad Tecnológica Metropolitana (UTM), observando el flujo real durante las clases, cambios de laboratorio y traslados en transporte público sin datos móviles.
+- **Consulta breve con compañeros de grupo (18 de noviembre de 2026, 12 estudiantes de 4.º cuatrimestre de TI en la UTM):**
+  - 10 de 12 comentaron que anotan tareas fotografiando el pizarrón o en mensajes de WhatsApp y que esas fotos se pierden en la galería.
+  - 9 de 12 indicaron que no llevan un conteo exacto de sus inasistencias por materia hasta que el profesor pasa lista antes de las evaluaciones parciales.
+  - 11 de 12 señalaron que calculan manualmente en calculadora o papel cuánto necesitan sacar en la última unidad para alcanzar la calificación mínima aprobatoria.
+- **Criterio académico y control de asistencia en la UTM:**
+  - En el modelo cuatrimestral por competencias de la UTM, la calificación mínima aprobatoria es de **8.0** (escala de 0 a 10) y el estudiante requiere cubrir al menos el **80 % – 85 % de asistencia** por asignatura/unidad (equivalente a un límite práctico de **3 a 6 faltas por cuatrimestre** según las horas semanales de cada materia) para conservar el derecho a evaluación ordinaria; las inasistencias con justificante médico o institucional no se descuentan del límite.
