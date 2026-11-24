@@ -57,13 +57,13 @@ tarea con id del cliente, subir y leer foto, y **aislamiento con dos usuarios** 
 
 | # | Pasos para reproducir | Esperado | Obtenido | Responsable | Corrección | Evidencia |
 |---|---|---|---|---|---|---|
-| I-1 | Registro en un teléfono angosto o con letra del sistema agrandada | Todo el texto visible | La fila "¿Ya tienes una cuenta? Inicia sesión" se desborda 129 px (franja amarilla) | ✏️ | `Row` → `Wrap` en registro y login | `form_validation_test.dart` pasa sin errores de layout |
-| I-2 | `cd web; npm ci` en una PC limpia | Instala dependencias | Falla: `package-lock.json` desincronizado (faltan `@emnapi/*`) | ✏️ | Lockfile regenerado con `npm install` | `npm ci`, `npm test` 18/18 y `npm run build` correctos |
-| I-3 | Compilar release | APK firmado con clave del proyecto | Firmado con la clave de **debug** | ✏️ | `signingConfigs.release` + `key.properties` fuera de Git | `apksigner` muestra `CN=MiSemestre UTM` |
-| I-4 | Instalar el APK | Ícono propio | Ícono por defecto de Flutter | ✏️ | Ícono propio + `flutter_launcher_icons` (adaptativo) | Captura del cajón de apps ✏️ |
-| I-5 | Elegir hora de entrega en el formulario de tarea | Se guarda la hora elegida | El selector no respetaba la hora elegida (desarrollo de v1.1.0) | ✏️ | Corregido en v1.1.0 | `settings_and_features_test` grupo 5 |
-| I-6 | Registrar más faltas que el límite | "Restantes: 0" | Mostraba número negativo (desarrollo de v1.0.0) | ✏️ | Corregido en v1.0.0 | `demo_adjustments_test` caso 2 |
-| I-7 | Negar el permiso de notificaciones al abrir la app → registrar la falta que deja 1 restante → conceder el permiso → registrar otra | La alerta llega cuando ya hay permiso | No llega: la app marca la alerta como "enviada" aunque Android la bloqueó | ✏️ | **Abierta.** Propuesta: guardar la marca solo si el permiso está concedido (`absence_provider.dart`, `_checkAndNotifyAbsenceAlerts`) | Encontrado en emulador; con permiso concedido la alerta sí llega (`12`) |
+| I-1 | Registro en un teléfono angosto o con letra del sistema agrandada | Todo el texto visible | La fila "¿Ya tienes una cuenta? Inicia sesión" se desborda 129 px (franja amarilla) | Nataly Santos | `Row` → `Wrap` en registro y login | `form_validation_test.dart` pasa sin errores de layout |
+| I-2 | `cd web; npm ci` en una PC limpia | Instala dependencias | Falla: `package-lock.json` desincronizado (faltan `@emnapi/*`) | Genaro Antonio | Lockfile regenerado con `npm install` | `npm ci`, `npm test` 18/18 y `npm run build` correctos |
+| I-3 | Compilar release | APK firmado con clave del proyecto | Firmado con la clave de **debug** | Genaro Antonio | `signingConfigs.release` + `key.properties` fuera de Git | `apksigner` muestra `CN=MiSemestre UTM` |
+| I-4 | Instalar el APK | Ícono propio | Ícono por defecto de Flutter | Nataly Santos | Ícono propio + `flutter_launcher_icons` (adaptativo) | Captura del cajón de apps ✏️ |
+| I-5 | Elegir hora de entrega en el formulario de tarea | Se guarda la hora elegida | El selector no respetaba la hora elegida (desarrollo de v1.1.0) | Santiago Pech | Corregido en v1.1.0 | `settings_and_features_test` grupo 5 |
+| I-6 | Registrar más faltas que el límite | "Restantes: 0" | Mostraba número negativo (desarrollo de v1.0.0) | Santiago Pech | Corregido en v1.0.0 | `demo_adjustments_test` caso 2 |
+| I-7 | Negar el permiso de notificaciones al abrir la app → registrar la falta que deja 1 restante → conceder el permiso → registrar otra | La alerta llega cuando ya hay permiso | No llega: la app marca la alerta como "enviada" aunque Android la bloqueó | Santiago Pech | **Abierta.** Propuesta: guardar la marca solo si el permiso está concedido (`absence_provider.dart`, `_checkAndNotifyAbsenceAlerts`) | Encontrado en emulador; con permiso concedido la alerta sí llega (`12`) |
 
 > ✏️ Agregar aquí cada defecto que encuentren al probar en el teléfono, con el mismo formato.
 

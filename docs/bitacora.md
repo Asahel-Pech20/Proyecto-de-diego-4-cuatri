@@ -44,4 +44,4 @@ Pendiente del equipo:
 - ✅ `npm test` del backend con Docker: 13 de 13 casos (ver `docs/pruebas.md`).
 - ✏️ Repetir en un teléfono físico: recordatorio sin internet, widget y reinicio.
 - ✏️ Corregir I-7 (alerta de faltas cuando se negó el permiso de notificaciones).
-- ✏️ Cada integrante sube su parte con su cuenta (ver Issues).
+- ✏️ Cada integrante sube su parte con su cuenta: ver [participacion.md](participacion.md).

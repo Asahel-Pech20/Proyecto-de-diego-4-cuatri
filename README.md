@@ -29,7 +29,7 @@ Proyecto final de Desarrollo de Aplicaciones Móviles.
 | 1 | Propuesta | [docs/propuesta.md](docs/propuesta.md) |
 | 2 | Análisis y diseño (historias, mapa de navegación, bocetos, guía visual) | [docs/analisis-diseno.md](docs/analisis-diseno.md) |
 | 3 | Código fuente | `app/`, `web/`, `backend/` |
-| 4 | Repositorio y colaboración | [CONTRIBUTING.md](CONTRIBUTING.md) · [docs/bitacora.md](docs/bitacora.md) |
+| 4 | Repositorio y colaboración | [CONTRIBUTING.md](CONTRIBUTING.md) · [docs/bitacora.md](docs/bitacora.md) · [docs/participacion.md](docs/participacion.md) |
 | 5 | Datos y seguridad | [docs/datos-seguridad.md](docs/datos-seguridad.md) |
 | 6 | Pruebas e incidencias | [docs/pruebas.md](docs/pruebas.md) |
 | 7 | APK firmado | *Releases* · cómo generarlo: [docs/apk-firma.md](docs/apk-firma.md) |
