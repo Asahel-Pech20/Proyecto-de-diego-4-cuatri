@@ -40,6 +40,8 @@ Avance:
 - Documentación de entrega: propuesta, análisis y diseño, web vs. móvil, datos y seguridad, pruebas, APK y presentación.
 
 Pendiente del equipo:
-- ✏️ Probar el APK en un teléfono real y guardar capturas en `docs/evidencias/`.
-- ✏️ Correr `npm test` del backend con Docker y anotar el resultado en `docs/pruebas.md`.
+- ✅ APK probado en emulador Android 15: capturas y videos en `docs/evidencias/`.
+- ✅ `npm test` del backend con Docker: 13 de 13 casos (ver `docs/pruebas.md`).
+- ✏️ Repetir en un teléfono físico: recordatorio sin internet, widget y reinicio.
+- ✏️ Corregir I-7 (alerta de faltas cuando se negó el permiso de notificaciones).
 - ✏️ Cada integrante sube su parte con su cuenta (ver Issues).
